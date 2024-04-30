@@ -1,5 +1,4 @@
 import requests
-import hashlib
 import tkinter as tk
 from tkinter import scrolledtext
 
@@ -19,34 +18,30 @@ def fetch_without_tor(url):
 
 # Function to calculate similarity between two texts
 def calculate_similarity(text1, text2):
-    hash1 = hashlib.sha256(text1.encode()).hexdigest()
-    hash2 = hashlib.sha256(text2.encode()).hexdigest()
-    similarity_percentage = len(set(hash1) & set(hash2)) / float(len(set(hash1) | set(hash2))) * 100
+    len_text1 = len(text1)
+    len_text2 = len(text2)
+    total_length = max(len_text1, len_text2)
+    common_chars = sum(1 for char1, char2 in zip(text1, text2) if char1 == char2)
+    similarity_percentage = (common_chars / total_length) * 100
     return similarity_percentage
 
 # Function to compare content fetched with and without Tor
 def compare_content(url):
     content_with_tor = fetch_with_tor(url)
     content_without_tor = fetch_without_tor(url)
-    
     similarity_percentage = calculate_similarity(content_with_tor, content_without_tor)
-    
     return similarity_percentage, content_with_tor, content_without_tor
 
 # Function to update the GUI with comparison results
-def update_gui(similarity_percentage, content_with_tor, content_without_tor):
-    lbl_similarity.config(text=f"Similarity Percentage: {similarity_percentage:.2f}%")
-    txt_with_tor.delete(1.0, tk.END)
-    txt_with_tor.insert(tk.END, content_with_tor)
-    txt_without_tor.delete(1.0, tk.END)
-    txt_without_tor.insert(tk.END, content_without_tor)
-
-# Function to handle the comparison button click event
-def compare_button_click():
+def update_gui():
     url = entry_url.get()
     if url:
         similarity_percentage, content_with_tor, content_without_tor = compare_content(url)
-        update_gui(similarity_percentage, content_with_tor, content_without_tor)
+        lbl_similarity.config(text=f"Similarity Percentage: {similarity_percentage:.4f}%")
+        txt_with_tor.delete(1.0, tk.END)
+        txt_with_tor.insert(tk.END, content_with_tor)
+        txt_without_tor.delete(1.0, tk.END)
+        txt_without_tor.insert(tk.END, content_without_tor)
 
 # Create main application window
 root = tk.Tk()
@@ -59,7 +54,7 @@ entry_url = tk.Entry(root, width=50)
 entry_url.grid(row=0, column=1, padx=5, pady=5)
 
 # Create comparison button
-btn_compare = tk.Button(root, text="Compare", command=compare_button_click)
+btn_compare = tk.Button(root, text="Compare", command=update_gui)
 btn_compare.grid(row=0, column=2, padx=5, pady=5)
 
 # Create similarity percentage label
