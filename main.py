@@ -71,3 +71,4 @@ txt_without_tor.grid(row=3, column=0, padx=5, pady=5, columnspan=3)
 
 # Run the application
 root.mainloop()
+
