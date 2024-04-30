@@ -1,1 +1,1 @@
-Dillusion is to see if your intrnent provider gives different results than others see.
+Dillusion is to see if your internent provider gives different results than others see.
