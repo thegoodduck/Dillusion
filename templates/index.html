@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anti-Censorship Kit</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="mb-5">Anti-Censorship Kit</h1>
+        <form method="post">
+            <div class="form-group">
+                <label for="url">Enter URL:</label>
+                <input type="text" class="form-control" id="url" name="url" required>
+            </div>
+            <div class="form-group">
+                <label for="proxy-mode">Select Proxy Mode:</label>
+                <select class="form-control" id="proxy-mode" name="proxy_mode">
+                    <option value="direct" {% if proxy_mode == 'direct' %}selected{% endif %}>Direct Connection</option>
+                    <option value="tor" {% if proxy_mode == 'tor' %}selected{% endif %}>Tor</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Check</button>
+        </form>
+        {% if url %}
+            <div class="mt-5">
+                <h2>Content Fetched:</h2>
+                <div>{{ content | safe }}</div>
+                {% if censorship_test_result %}
+                    <div class="alert alert-success mt-3" role="alert">
+                        The website is accessible. No censorship detected.
+                    </div>
+                {% else %}
+                    <div class="alert alert-danger mt-3" role="alert">
+                        The website is inaccessible. Possible censorship detected.
+                    </div>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Bootstrap JS (optional) -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
