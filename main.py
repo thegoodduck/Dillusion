@@ -6,7 +6,7 @@ import_sucessfull = True
 try:
     from PyQt5.QtCore import *
 except ImportError:
-    import subprocess
+import subprocess
     root = tk.Tk()
     root.title("Installing Dependencies")
     label = tk.Label(root, text="Installing Dependencies...")
