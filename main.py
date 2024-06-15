@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 # Importing required libraries
 import sys
+import tkinter as tk
 import_sucessfull = True
 try:
     from PyQt5.QtCore import *
@@ -46,7 +47,7 @@ except ImportError:
     label = tk.Label(root, text="Installing Dependencies...")
     label.pack()
     root.update()
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "PyQt5", "--break-system-packages"])
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "PyQtWebEngine", "--break-system-packages"])
     import_sucessfull = False
 try:
     from PyQt5.QtWebEngineCore import QWebEngineUrlRequestInterceptor
