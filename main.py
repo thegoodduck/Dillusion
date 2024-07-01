@@ -287,31 +287,46 @@ class MainWindow(QMainWindow):
     def apply_styles(self):
         self.setStyleSheet("""
             QMainWindow {
-                background-color: #F5F5F5;
+                background-color: #FFFFFF;
             }
             QToolBar {
-                background: #FFFFFF;
+                background-color: #E9E9ED;
+                border: none;
+                padding: 4px;
             }
             QTabWidget::pane {
-                border: 1px solid lightgray;
+                border: 1px solid #C1C1C1;
             }
             QTabBar::tab:selected {
-                background: #1E90FF;
-                color: #FFFFFF;
+                background-color: #FFFFFF;
+                border: 1px solid #C1C1C1;
+                border-bottom: none;
             }
             QTabBar::tab {
-                background: #E5E5E5;
-                padding: 10px;
-                border: 1px solid lightgray;
+                background-color: #F9F9FA;
+                border: 1px solid #C1C1C1;
+                padding: 5px 10px;
+                margin-right: 2px;
             }
             QLineEdit {
-                padding: 5px;
-                border: 1px solid lightgray;
-                border-radius: 5px;
+                padding: 3px;
+                border: 1px solid #C1C1C1;
+                border-radius: 2px;
                 font-size: 14px;
             }
+            QProgressBar {
+                border: 1px solid #C1C1C1;
+                border-radius: 2px;
+                background-color: #FFFFFF;
+                text-align: center;
+            }
+            QProgressBar::chunk {
+                background-color: #0A84FF;
+                width: 10px;
+            }
         """)
-        print("[DEBUG] Custom styles applied")
+        print("[DEBUG] Firefox-like styles applied")
+
 
     # Toggle privacy mode
     def toggle_privacy_mode(self):
@@ -355,25 +370,29 @@ class MainWindow(QMainWindow):
     def is_https(self, url):
         return url.scheme() == 'https'
 
-    # Enable file uploads and downloads
-    def enable_file_uploads_downloads(self):
+    def add_secure_button(self):
+        secure_btn = QAction("🔒", self)
+        secure_btn.setCheckable(True)
+        secure_btn.setChecked(self.is_https(self.tabs.currentWidget().url()))
+        secure_btn.setStatusTip("Toggle Secure Mode")
+        secure_btn.triggered.connect(self.toggle_secure_mode)
+        navtb.addAction(secure_btn)
+
+    def toggle_secure_mode(self, checked):
+        if checked:
+            self.tabs.currentWidget().setUrl(QUrl(f"https://{self.tabs.currentWidget().url().host()}"))
+        else:
+            self.tabs.currentWidget().setUrl(QUrl(f"http://{self.tabs.currentWidget().url().host()}"))
+    # Enable file downloads
+    def enable_file_downloads(self):
         self.page.profile().setHttpAcceptRequestHeaders(['application/octet-stream'])
         self.page.profile().setHttpAcceptResponseHeaders(['application/octet-stream'])
         self.page.downloadRequested.connect(self.download_file)
-        self.page.uploadRequested.connect(self.upload_file)
-        print("[DEBUG] File uploads and downloads enabled")
+        print("[DEBUG] File downloads enabled")
 
     def download_file(self, download):
         download.accept()
         print(f"[DEBUG] Downloading file: {download.url().toString()}")
-
-    def upload_file(self, upload):
-        filename, _ = QFileDialog.getOpenFileName(self, "Select file to upload")
-        if filename:
-            upload.setFile(filename)
-            print(f"[DEBUG] Uploading file: {filename}")
-        else:
-            upload.cancel()
 
 # Main entry point
 app = QApplication(sys.argv)
